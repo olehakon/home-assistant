@@ -140,7 +140,7 @@ action:
               sequence:
                 - service: light.turn_on
                   data:
-                    brightness_step_pct: -(!input brightness_step_pct)
+                    brightness_step_pct: -!input brightness_step_pct
                   target:
                     entity_id: !input light
                 - delay:
