@@ -117,36 +117,26 @@ action:
                     hours: 0
                     minutes: 0
                     seconds: 0
-                    milliseconds: 500
+                    milliseconds: 250
       - conditions:
           - condition: trigger
             id: offHold
         sequence:
           - repeat:
               while:
-                - condition: and
-                  conditions:
-                    - condition: trigger
-                      id: offHold
-                - condition: numeric_state
-                  entity_id: !input light
-                  value_template: >-
-                    {% if states(light).state == "on"  %}{{
-                    states(light).attributes.brightness
-                    }}{% else %}0{% endif %}
-                  above: 24
+                - condition: trigger
+                  id: onHold
               sequence:
                 - service: light.turn_on
                   data:
-                    brightness_step_pct: -10
+                    brightness_step: -10
                   target:
-                    entity_id:
-                      - !input light
+                    entity_id: !input light
                 - delay:
                     hours: 0
                     minutes: 0
                     seconds: 0
-                    milliseconds: 500
+                    milliseconds: 250
           - service: light.turn_on
             data:
               brightness_pct: 1
