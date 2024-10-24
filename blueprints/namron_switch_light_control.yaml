@@ -29,6 +29,17 @@ blueprint:
           min: 1
           max: 4
 
+    brightness_step_pct:
+      name: Brightness step
+      description: Brightness step in percent
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: slider
+          step: 1
+
 mode: restart
 max_exceeded: silent
 
@@ -110,7 +121,7 @@ action:
               sequence:
                 - service: light.turn_on
                   data:
-                    brightness_step: 10
+                    brightness_step_pct: !input brightness_step_pct
                   target:
                     entity_id: !input light
                 - delay:
@@ -129,7 +140,7 @@ action:
               sequence:
                 - service: light.turn_on
                   data:
-                    brightness_step: -10
+                    brightness_step_pct: -(!input brightness_step_pct)
                   target:
                     entity_id: !input light
                 - delay:
@@ -137,9 +148,4 @@ action:
                     minutes: 0
                     seconds: 0
                     milliseconds: 250
-          - service: light.turn_on
-            data:
-              brightness_pct: 1
-            target:
-              entity_id: !input light
 
