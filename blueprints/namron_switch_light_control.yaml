@@ -152,3 +152,4 @@ action:
               brightness_pct: 1
             target:
               entity_id: !input light
+
