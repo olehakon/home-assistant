@@ -129,7 +129,7 @@ action:
                     - condition: trigger
                       id: offHold
                 - condition: numeric_state
-                  device_id: !input light
+                  entity_id: !input light
                   value_template: >-
                     {% if states(light).state == "on"  %}{{
                     states(light).attributes.brightness
