@@ -136,7 +136,7 @@ action:
           - repeat:
               while:
                 - condition: trigger
-                  id: onHold
+                  id: offHold
               sequence:
                 - service: light.turn_on
                   data:
