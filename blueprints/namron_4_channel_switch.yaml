@@ -1,7 +1,6 @@
 blueprint:
-  name: ZHA - Namron 1, 2 og 4 kanal bryter
-  description: |
-    Controll lights and other with Namron zigbee remote
+  name: Namron 4 channel switch light control
+  description: Control a light with a Namron 4 channel switch
 
   domain: automation
   input:
