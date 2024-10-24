@@ -1,0 +1,153 @@
+blueprint:
+  name: ZHA - Namron 1, 2 og 4 kanal bryter
+  description: |
+    Controll lights and other with Namron zigbee remote
+
+  domain: automation
+  input:
+    remote:
+      name: Remote
+      description: Namron controller
+      selector:
+        device:
+          integration: zha
+          manufacturer: NAMRON AS
+
+    light:
+      name: Light
+      description: Light to control
+      selector:
+        entity:
+        domain: light
+
+    button_num:
+      name: Button number
+      description: Button number
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 4
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+  - id: "on"
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+      endpoint_id: !input button_num
+      command: "on"
+
+  - id: "off"
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+      endpoint_id: !input button_num
+      command: "off"
+
+  - id: onHold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+      endpoint_id: !input button_num
+      command: move_with_on_off
+      args:
+        - 0
+        - 50
+
+  - id: onRelease
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+      endpoint_id: !input button_num
+      command: stop_with_on_off
+
+  - id: offHold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+      endpoint_id: !input button_num
+      command: move_with_on_off
+      args:
+        - 1
+        - 50
+
+condition: []
+action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: "on"
+      sequence:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: !input light
+    - conditions:
+        - condition: trigger
+          id: "off"
+      sequence:
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: !input light
+    - conditions:
+        - condition: trigger
+          id: onHold
+      sequence:
+        - repeat:
+          while:
+            - condition: trigger
+              id: onHold
+          sequence:
+            - service: light.turn_on
+              data:
+                brightness_step: 10
+              target:
+                entity_id: !input light
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 0
+                milliseconds: 500
+    - conditions:
+      - condition: trigger
+        id: offHold
+      sequence:
+        - repeat:
+          while:
+            - condition: and
+              conditions:
+                - condition: trigger
+                  id: offHold
+            - condition: numeric_state
+              entity_id: !input light
+              value_template: >-
+                {% if states(light).state == "on"  %}{{
+                states(light).attributes.brightness
+                }}{% else %}0{% endif %}
+              above: 24
+          sequence:
+            - service: light.turn_on
+              data:
+                brightness_step_pct: -10
+              target:
+                entity_id: !input light
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 0
+                milliseconds: 500
+        - service: light.turn_on
+          data:
+            brightness_pct: 1
+          target:
+            entity_id: !input light
