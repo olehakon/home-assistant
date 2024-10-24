@@ -17,8 +17,9 @@ blueprint:
       name: Light
       description: Light to control
       selector:
-        entity:
-        domain: light
+        device:
+          entity:
+            domain: light
 
     button_num:
       name: Button number
