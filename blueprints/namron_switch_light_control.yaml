@@ -51,6 +51,17 @@ blueprint:
           mode: slider
           step: 1
 
+    step_delay_milliseconds:
+      name: Step delay milliseconds
+      description: Delay between each step in milliseconds
+      default: 250
+      selector:
+        number:
+          min: 0
+          max: 1000
+          mode: slider
+          step: 1
+
 mode: restart
 max_exceeded: silent
 
@@ -139,7 +150,7 @@ action:
                     hours: 0
                     minutes: 0
                     seconds: 0
-                    milliseconds: 250
+                    milliseconds: step_delay_milliseconds
       - conditions:
           - condition: trigger
             id: offHold
@@ -158,5 +169,5 @@ action:
                     hours: 0
                     minutes: 0
                     seconds: 0
-                    milliseconds: 250
+                    milliseconds: !input step_delay_milliseconds
 
