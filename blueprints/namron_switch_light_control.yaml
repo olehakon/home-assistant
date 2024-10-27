@@ -150,7 +150,7 @@ action:
                     hours: 0
                     minutes: 0
                     seconds: 0
-                    milliseconds: step_delay_milliseconds
+                    milliseconds: !input step_delay_milliseconds
       - conditions:
           - condition: trigger
             id: offHold
