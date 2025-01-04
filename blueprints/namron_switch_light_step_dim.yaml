@@ -1,5 +1,5 @@
 blueprint:
-  name: Namron 4 channel switch light control
+  name: Namron 4 channel switch light control with step dimming
   description: Control a light with a Namron 4 channel switch
 
   domain: automation
@@ -48,17 +48,6 @@ blueprint:
         number:
           min: 1
           max: 100
-          mode: slider
-          step: 1
-
-    step_delay_milliseconds:
-      name: Step delay milliseconds
-      description: Delay between each step in milliseconds
-      default: 250
-      selector:
-        number:
-          min: 0
-          max: 1000
           mode: slider
           step: 1
 
@@ -120,52 +109,32 @@ action:
             id: "on"
         sequence:
           - service: light.turn_on
+            data:
+              brightness_step_pct: !input brightness_step_pct_up
             target:
               entity_id: !input light
       - conditions:
           - condition: trigger
             id: "off"
         sequence:
-          - service: light.turn_off
-            data: {}
+          - service: light.turn_on
+            data:
+              brightness_step_pct: !input brightness_step_pct_down
             target:
               entity_id: !input light
       - conditions:
           - condition: trigger
             id: onHold
         sequence:
-          - repeat:
-              while:
-                - condition: trigger
-                  id: onHold
-              sequence:
-                - service: light.turn_on
-                  data:
-                    brightness_step_pct: !input brightness_step_pct_up
-                  target:
-                    entity_id: !input light
-                - delay:
-                    hours: 0
-                    minutes: 0
-                    seconds: 0
-                    milliseconds: !input step_delay_milliseconds
+          - service: light.turn_on
+            target:
+              entity_id: !input light
       - conditions:
           - condition: trigger
             id: offHold
         sequence:
-          - repeat:
-              while:
-                - condition: trigger
-                  id: offHold
-              sequence:
-                - service: light.turn_on
-                  data:
-                    brightness_step_pct: !input brightness_step_pct_down
-                  target:
-                    entity_id: !input light
-                - delay:
-                    hours: 0
-                    minutes: 0
-                    seconds: 0
-                    milliseconds: !input step_delay_milliseconds
+          - service: light.turn_off
+            data: { }
+            target:
+              entity_id: !input light
 
