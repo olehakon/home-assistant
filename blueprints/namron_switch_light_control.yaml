@@ -104,7 +104,7 @@ trigger:
         - 1
         - 50
 
-  - id: offHold2
+  - id: offHoldNew
     platform: event
     event_type: zha_event
     event_data:
@@ -177,21 +177,21 @@ action:
 
       - conditions:
           - condition: trigger
-            id: offHold2
-          sequence:
-            - repeat:
-                while:
-                  - condition: trigger
-                    id: offHold2
-                sequence:
-                  - service: light.turn_on
-                    data:
-                      brightness_step_pct: !input brightness_step_pct_down
-                    target:
-                      entity_id: !input light
-                  - delay:
-                      hours: 0
-                      minutes: 0
-                      seconds: 0
-                      milliseconds: !input step_delay_milliseconds
+            id: offHoldNew
+        sequence:
+          - repeat:
+              while:
+                - condition: trigger
+                  id: offHoldNew
+              sequence:
+                - service: light.turn_on
+                  data:
+                    brightness_step_pct: !input brightness_step_pct_down
+                  target:
+                    entity_id: !input light
+                - delay:
+                    hours: 0
+                    minutes: 0
+                    seconds: 0
+                    milliseconds: !input step_delay_milliseconds
 
