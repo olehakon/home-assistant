@@ -32,7 +32,7 @@ blueprint:
     brightness_step_pct_down:
       name: Brightness step dim down
       description: Brightness step in percent when dimming down
-      default: -10
+      default: -2
       selector:
         number:
           min: -100
@@ -43,7 +43,7 @@ blueprint:
     brightness_step_pct_up:
       name: Brightness step dim up
       description: Brightness step in percent
-      default: 10
+      default: 2
       selector:
         number:
           min: 1
@@ -54,7 +54,7 @@ blueprint:
     step_delay_milliseconds:
       name: Step delay milliseconds
       description: Delay between each step in milliseconds
-      default: 250
+      default: 110
       selector:
         number:
           min: 0
@@ -93,14 +93,6 @@ trigger:
         - 0
         - 50
 
-  - id: onRelease
-    platform: event
-    event_type: zha_event
-    event_data:
-      device_id: !input remote
-      endpoint_id: !input button_num
-      command: stop_with_on_off
-
   - id: offHold
     platform: event
     event_type: zha_event
@@ -111,6 +103,19 @@ trigger:
       args:
         - 1
         - 50
+
+  - id: offHold2
+      platform: event
+      event_type: zha_event
+      event_data:
+        device_id: !input remote
+        endpoint_id: !input button_num
+        command: move
+        args:
+          - 1
+          - 50
+          - 0
+          - 0
 
 condition: []
 action:
@@ -168,4 +173,25 @@ action:
                     minutes: 0
                     seconds: 0
                     milliseconds: !input step_delay_milliseconds
+
+
+      - conditions:
+          - condition: trigger
+            id: offHold2
+          sequence:
+            - repeat:
+                while:
+                  - condition: trigger
+                    id: offHold2
+                sequence:
+                  - service: light.turn_on
+                    data:
+                      brightness_step_pct: !input brightness_step_pct_down
+                    target:
+                      entity_id: !input light
+                  - delay:
+                      hours: 0
+                      minutes: 0
+                      seconds: 0
+                      milliseconds: !input step_delay_milliseconds
 
