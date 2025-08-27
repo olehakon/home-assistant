@@ -105,17 +105,17 @@ trigger:
         - 50
 
   - id: offHold2
-      platform: event
-      event_type: zha_event
-      event_data:
-        device_id: !input remote
-        endpoint_id: !input button_num
-        command: move
-        args:
-          - 1
-          - 50
-          - 0
-          - 0
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+      endpoint_id: !input button_num
+      command: move
+      args:
+        - 1
+        - 50
+        - 0
+        - 0
 
 condition: []
 action:
